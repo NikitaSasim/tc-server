@@ -1,6 +1,6 @@
 from django.urls import include, path
 from rest_framework import routers
-from .views import UserViewSet, TaskViewSet, TaskDetailView, CreateUserView, AssistantView
+from .views import UserViewSet, TaskViewSet, TaskDetailView, CreateUserView, AssistantView, ValidateTokenView
 
 # router = routers.DefaultRouter()
 # router.register(r'user/me', UserViewSet)
@@ -14,4 +14,5 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('auth/signup/', CreateUserView.as_view(), name='api-signup'),
     path('assistant/', AssistantView.as_view(), name='assistant'),
+    path('validate/', ValidateTokenView.as_view(), name='validate-tokens')
 ]
