@@ -62,8 +62,8 @@ You have to reply with the message explaining your pick shortly, please don't re
 to describe the task, just reply as a human, in simple words, short one paragraph of text and also provide the picked tasks ids in the end. 
 Provide answer only in the following JSON format, no quotes, just object, no text outside the object:
 {
-  answerText: TEXT OF YOUR RESPONSE, ONLY HERE,
-  pickedTasksArray: [id1, id2]
+  "answerText": "TEXT OF YOUR RESPONSE, ONLY HERE",
+  "pickedTasksArray": ["id1", "id2"]
 }
 """
 
