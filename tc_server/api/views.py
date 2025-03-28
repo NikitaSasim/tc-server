@@ -130,19 +130,13 @@ class TaskViewSet(generics.ListCreateAPIView):
     "{original_description}"
 
     Please:
-    - Extract the key actionable steps needed to complete this task.
-    - If possible, provide up to 5 useful links (e.g., tutorials, docs, tools) that can help the user accomplish it.
+- Extract the key actionable steps needed to complete this task.
+- If possible, provide up to 5 useful links (e.g., tutorials, documentation, tools) that can help the user accomplish it.
 
-    Respond in English in the following format:
-
-    Key Points:
-    - point 1
-    - point 2
-    ...
-
-    Resources:
-    1. [title](url)
-    2. ...
+Respond in **English** using **Markdown format**. Use:
+- Bullet lists for steps
+- Numbered list with links (with titles) for resources
+- Avoid extra headers or formatting outside of this
     """
 
         try:
