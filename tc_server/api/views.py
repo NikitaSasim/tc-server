@@ -101,14 +101,25 @@ class TaskViewSet(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Task.objects.filter(user=self.request.user)
+        user = self.request.user
+        queryset = Task.objects.filter(user=user)
+
+        status_filter = self.request.query_params.get('filter')
+        if status_filter:
+            status_list = [s.strip().lower() for s in status_filter.split(',')]
+            queryset = queryset.filter(status__iregex=r'^(' + '|'.join(status_list) + r')$')
+
+        search_query = self.request.query_params.get('search')
+        if search_query:
+            queryset = queryset.filter(description__icontains=search_query)
+
+        return queryset
 
     def perform_create(self, serializer):
         user = self.request.user
         data = self.request.data
         original_description = data.get("description", "")
 
-        # Формируем промпт на английском
         prompt = f"""
 You are an assistant helping to analyze a task. The user wrote the following task description:
 
@@ -143,7 +154,6 @@ Resources:
 
             gpt_response = response.choices[0].message.content.strip()
 
-            # Объединяем оригинальное описание + ответ
             combined_description = f"{original_description}\n\n---\n\n{gpt_response}"
 
             serializer.save(user=user, description=combined_description)
