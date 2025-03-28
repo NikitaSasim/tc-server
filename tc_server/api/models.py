@@ -25,21 +25,22 @@ class Task(models.Model):
     description = models.TextField(max_length=5000)
     user = models.ForeignKey(
         "User", on_delete=models.CASCADE, related_name='tasks')
-    creationDate = models.DateTimeField(auto_now_add=True, blank=True)
-    updateDate = models.DateTimeField(blank=True)
-    expirationDate = models.DateTimeField(blank=True)
+
+    creationDate = models.DateTimeField(auto_now_add=True)
+    updateDate = models.DateTimeField(auto_now=True)
+    expirationDate = models.DateTimeField(blank=True, null=True)
     due_date = models.DateTimeField(blank=True, null=True)
 
     priority = models.CharField(
         max_length=50,
         blank=True,
-        default=""
+        default="sooner"
     )
 
     status = models.CharField(
         max_length=50,
         blank=True,
-        default=""
+        default="created"
     )
 
     def __str__(self):
