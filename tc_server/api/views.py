@@ -129,14 +129,16 @@ class TaskViewSet(generics.ListCreateAPIView):
 
     "{original_description}"
 
-    Please:
-- Extract the key actionable steps needed to complete this task.
-- If possible, provide up to 5 useful links (e.g., tutorials, documentation, tools) that can help the user accomplish it.
+    Your job is to:
+- Identify and list the **most important steps** required to complete this task.
+- **Limit the list to 4 steps maximum**.
+- **Do not include generic or obvious actions** like "start working", "open a browser", "do research", or "ask someone".
+- If possible, provide up to 5 useful links (e.g., tutorials, documentation, tools) that can help accomplish the task.
 
 Respond in **English** using **Markdown format**. Use:
-- Bullet lists for steps
-- Numbered list with links (with titles) for resources
-- Avoid extra headers or formatting outside of this
+- Bullet points for steps
+- Numbered list for links (with proper titles)
+- No extra formatting or headers
     """
 
         try:
