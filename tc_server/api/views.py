@@ -118,28 +118,32 @@ class TaskViewSet(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         user = self.request.user
         data = self.request.data
-        original_description = data.get("description", "")
+        original_description = data.get("description", "").strip()
+
+        if len(original_description) < 10:
+            serializer.save(user=user, description=original_description)
+            return
 
         prompt = f"""
-You are an assistant helping to analyze a task. The user wrote the following task description:
+    You are an assistant helping to analyze a task. The user wrote the following task description:
 
-"{original_description}"
+    "{original_description}"
 
-Please:
-- Extract the key actionable steps needed to complete this task.
-- If possible, provide up to 5 useful links (e.g., tutorials, docs, tools) that can help the user accomplish it.
+    Please:
+    - Extract the key actionable steps needed to complete this task.
+    - If possible, provide up to 5 useful links (e.g., tutorials, docs, tools) that can help the user accomplish it.
 
-Respond in English in the following format:
+    Respond in English in the following format:
 
-Key Points:
-- point 1
-- point 2
-...
+    Key Points:
+    - point 1
+    - point 2
+    ...
 
-Resources:
-1. [title](url)
-2. ...
-"""
+    Resources:
+    1. [title](url)
+    2. ...
+    """
 
         try:
             response = client.chat.completions.create(
@@ -154,12 +158,25 @@ Resources:
 
             gpt_response = response.choices[0].message.content.strip()
 
-            combined_description = f"{original_description}\n\n---\n\n{gpt_response}"
+            rejection_signals = [
+                "i'm sorry",
+                "not clear",
+                "not detailed",
+                "please provide more",
+                "could you clarify",
+                "unclear",
+                "need more details",
+                "not sure what"
+            ]
 
-            serializer.save(user=user, description=combined_description)
+            if any(signal in gpt_response.lower() for signal in rejection_signals) or len(gpt_response) < 100:
+                serializer.save(user=user, description=original_description)
+            else:
+                combined_description = f"{original_description}\n\n---\n\n{gpt_response}"
+                serializer.save(user=user, description=combined_description)
 
         except Exception as e:
-            raise Exception(f"OpenAI request failed: {e}")
+            serializer.save(user=user, description=original_description)
 
 
 class TaskDetailView(generics.RetrieveUpdateDestroyAPIView):

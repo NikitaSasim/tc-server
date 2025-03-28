@@ -3,13 +3,24 @@ from .models import User, Task
 from django.contrib.auth import get_user_model
 
 
+class NullableDateTimeField(serializers.DateTimeField):
+    def to_internal_value(self, value):
+        if value in ("", None):
+            return None
+        return super().to_internal_value(value)
+
+
 class TaskSerializer(serializers.ModelSerializer):
+    expirationDate = NullableDateTimeField(required=False, allow_null=True)
+    due_date = NullableDateTimeField(required=False, allow_null=True)
+
     class Meta:
         model = Task
         fields = (
             'taskId', 'creationDate', 'status', 'updateDate', 'description',
             'priority', 'expirationDate', 'due_date'
         )
+
 
 class UserSerializer(serializers.ModelSerializer):
     tasks = TaskSerializer(many=True)
