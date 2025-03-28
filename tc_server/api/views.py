@@ -69,14 +69,16 @@ class UserViewSet(generics.ListAPIView):
         return User.objects.filter(id=user.id)
 
 
-
-class TaskViewSet(generics.ListAPIView):
+class TaskViewSet(generics.ListCreateAPIView):
     serializer_class = TaskSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
-        return Task.objects.filter(user=user)
+        return Task.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 class TaskDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()

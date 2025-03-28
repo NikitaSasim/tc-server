@@ -21,32 +21,26 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Task(models.Model):
-    class TaskStatus(models.TextChoices):
-        CREATED = 'CRE', _('created'),
-        RESOLVED = 'RES', _('resolved'),
-        REJECTED = 'REJ', _('rejected')
-
-    class TaskPriority(models.TextChoices):
-        SOONER = 'SO', _('sooner'),
-        LATER = 'LA', _('later'),
-        MAYBENEVER = 'MN', _('maybe never')
-
     taskId = models.BigAutoField(primary_key=True)
-    description = models.TextField(max_length=400)
+    description = models.TextField(max_length=5000)
     user = models.ForeignKey(
         "User", on_delete=models.CASCADE, related_name='tasks')
     creationDate = models.DateTimeField(auto_now_add=True, blank=True)
     updateDate = models.DateTimeField(blank=True)
     expirationDate = models.DateTimeField(blank=True)
+    due_date = models.DateTimeField(blank=True, null=True)
 
     priority = models.CharField(
-        max_length=2,
-        choices=TaskPriority.choices,
-        default=TaskPriority.LATER,
+        max_length=50,
+        blank=True,
+        default=""
     )
 
     status = models.CharField(
-        max_length=3,
-        choices=TaskStatus.choices,
-        default=TaskStatus.CREATED,
+        max_length=50,
+        blank=True,
+        default=""
     )
+
+    def __str__(self):
+        return f"{self.description[:30]}..."
